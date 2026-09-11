@@ -1,0 +1,1 @@
+"""PitchPal v1.1 — FastAPI + HTMX + Jinja2 + Tailwind v4 + PostgreSQL"""

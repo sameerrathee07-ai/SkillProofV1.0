@@ -1,0 +1,125 @@
+/* ============================================================
+   AUTH — login / signup (white editorial)
+   Rendered outside the dashboard theme.
+   ============================================================ */
+.au-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: var(--hp-bg);
+}
+.au-shell { width: 100%; max-width: 400px; }
+.au-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.au-brand-name { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--hp-text-1); }
+
+.au-card {
+  background: #fff;
+  border: 1px solid var(--hp-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: 32px;
+}
+.au-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--hp-text-1); }
+.au-sub { font-size: 14px; color: var(--hp-text-muted); margin-top: 6px; margin-bottom: 24px; }
+
+.au-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #b23c2e;
+  background: #fff5f5;
+  border: 1px solid #f0b8b2;
+  border-left: 3px solid #c0392b;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 18px;
+}
+.au-alert .icon { flex-shrink: 0; }
+
+.au-form { display: flex; flex-direction: column; gap: 16px; }
+.au-field { display: flex; flex-direction: column; gap: 6px; }
+.au-label { font-size: 13px; font-weight: 600; color: var(--hp-text-2); }
+.au-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  background: #fff;
+  border: 1px solid var(--hp-border);
+  border-radius: var(--radius-sm);
+  color: var(--hp-text-1);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.au-input:focus { outline: none; border-color: var(--hp-accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+.au-input::placeholder { color: var(--hp-text-muted); }
+.au-hint { font-size: 12px; color: var(--hp-text-muted); }
+
+.au-submit {
+  width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px;
+  font-size: 15px; font-weight: 600;
+  color: #fff; background: var(--hp-pill-active);
+  border: 1px solid var(--hp-pill-active);
+  border-radius: var(--radius-sm);
+  margin-top: 4px;
+  transition: background var(--transition-fast);
+}
+.au-submit:hover:not(:disabled) { background: #000; }
+.au-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.au-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0;
+  font-size: 12px; color: var(--hp-text-muted);
+}
+.au-divider::before, .au-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--hp-border);
+}
+.au-demo {
+  width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px;
+  font-size: 14px; font-weight: 600;
+  color: var(--hp-text-1); background: #fff;
+  border: 1px solid var(--hp-border);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.au-demo:hover { background: var(--hp-pill-bg); border-color: var(--hp-text-muted); }
+
+.au-foot { font-size: 14px; color: var(--hp-text-muted); text-align: center; margin-top: 22px; }
+.au-foot a { font-weight: 600; }
+
+.au-benefits {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hp-border);
+}
+.au-benefits-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--hp-text-muted); margin-bottom: 12px; }
+.au-benefits ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.au-benefits li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--hp-text-2); }
+.au-benefits li .icon { color: var(--hp-accent); flex-shrink: 0; }
+
+.au-legal { font-size: 12px; color: var(--hp-text-muted); text-align: center; margin-top: 24px; line-height: 1.6; }
+.au-legal a { color: var(--hp-text-2); text-decoration: underline; }
+
+/* calm inline spinner (no bounce) */
+.au-spinner {
+  width: 15px; height: 15px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: au-spin 0.7s linear infinite;
+}
+@keyframes au-spin { to { transform: rotate(360deg); } }

@@ -1,0 +1,128 @@
+/* ============================================================
+   Loading, empty and error states.
+
+   Now that every view reads from the API, each one needs a calm
+   placeholder while data is in flight. Skeletons pulse opacity
+   rather than sweeping a gradient — surfaces stay flat, and the
+   motion stays quiet.
+   ============================================================ */
+
+@keyframes pp-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+.db-skeleton {
+  background: #ece7dd;
+  border-radius: 6px;
+  animation: pp-pulse 1.6s ease-in-out infinite;
+}
+
+.db-skeleton-value  { width: 64px;  height: 30px; margin: 2px 0 6px; }
+.db-skeleton-title  { width: 60%;   height: 16px; margin-bottom: 10px; }
+.db-skeleton-line   { width: 100%;  height: 12px; margin-bottom: 8px; }
+.db-skeleton-block  { width: 100%;  height: 96px; margin: 8px 0; }
+
+.pp-pkg-skeleton { height: 62px; margin-bottom: 10px; border-radius: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .db-skeleton { animation: none; }
+}
+
+/* Neutral text for a panel with nothing to show yet. */
+.db-panel-empty {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--db-text-muted);
+  margin: 0;
+}
+
+/* Avatar can hold a Google profile image instead of initials. */
+.db-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Session page: opening / thinking / out of tokens ---- */
+
+.ps-loading,
+.au-pending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 56px 20px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--db-text-muted);
+}
+
+.ps-bubble-thinking {
+  color: var(--db-text-muted);
+  font-style: italic;
+  animation: pp-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ps-bubble-thinking { animation: none; }
+}
+
+.ps-outoftokens {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+  margin: 16px 0;
+  background: #fff5f5;
+  border: 1px solid #e8cccc;
+  border-left: 3px solid var(--db-danger, #c0392b);
+  border-radius: 10px;
+}
+
+.ps-outoftokens h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--db-text);
+}
+
+.ps-outoftokens p {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--db-text-muted);
+  margin: 0;
+}
+
+/* ---- Google sign-in ---- */
+
+.au-google {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* Google renders its own button inside; just give it room to centre. */
+.au-google-btn {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  width: 100%;
+}
+
+.au-google-fallback {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--hp-text-muted);
+  text-align: center;
+  margin: 0;
+}
