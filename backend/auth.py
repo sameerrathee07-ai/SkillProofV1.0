@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User
 
-SECRET_KEY = os.getenv("SECRET_KEY", "skillproof_secret_key_2026_super_secure")
+SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 

@@ -8,7 +8,7 @@ from models import User
 from schemas import SignupRequest, LoginRequest, GoogleLoginRequest, AuthResponse
 from auth import hash_password, verify_password, create_access_token
 
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "507622021509-kqm4c7uqn6ajo3fso57saev6jvrmmk4c.apps.googleusercontent.com")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
