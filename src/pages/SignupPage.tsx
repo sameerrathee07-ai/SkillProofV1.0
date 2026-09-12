@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth-context';
 import { apiFetch } from '../lib/api';
 import { Eye, EyeOff, Building2, UserCheck } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,39 @@ export const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (!credentialResponse.credential) return;
+    setError('');
+    setLoading(true);
+    try {
+      const data = await apiFetch('/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({
+          id_token: credentialResponse.credential,
+          role,
+        }),
+      });
+
+      login(data.access_token, {
+        id: data.user_id,
+        email: data.email,
+        fullName: data.fullName,
+        role: data.role,
+      });
+
+      if (data.role === 'poster') {
+        navigate('/dashboard');
+      } else {
+        navigate('/problems');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Google Sign-In failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +114,25 @@ export const SignupPage: React.FC = () => {
             {error}
           </div>
         )}
+
+        {/* Google Sign-In */}
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google Sign-In failed or was closed.')}
+            theme="outline"
+            shape="rectangular"
+            width="100%"
+          />
+        </div>
+
+        <div className="relative flex items-center justify-center">
+          <div className="border-t border-ink/10 w-full"></div>
+          <span className="bg-ivory px-3 text-[10px] uppercase tracking-wider font-semibold text-ink-muted shrink-0">
+            or sign up with email
+          </span>
+          <div className="border-t border-ink/10 w-full"></div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm font-medium">
           
