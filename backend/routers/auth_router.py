@@ -8,7 +8,9 @@ from models import User
 from schemas import SignupRequest, LoginRequest, GoogleLoginRequest, AuthResponse
 from auth import hash_password, verify_password, create_access_token
 
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
+def get_google_client_id() -> str | None:
+    raw = os.getenv("GOOGLE_CLIENT_ID", "").strip().strip('"').strip("'")
+    return raw if raw else None
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -60,7 +62,7 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
 def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
     try:
         # If GOOGLE_CLIENT_ID is set in env, verify against it; otherwise verify token structure
-        client_id_check = GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID else None
+        client_id_check = get_google_client_id()
         id_info = id_token.verify_oauth2_token(req.id_token, requests.Request(), audience=client_id_check)
         email = id_info.get("email")
         name = id_info.get("name", "Google User")

@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const rawBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').trim();
+export const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem('skillproof_token');
@@ -12,7 +13,8 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const response = await fetch(`${API_BASE_URL}${cleanEndpoint}`, {
     ...options,
     headers,
   });

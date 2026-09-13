@@ -25,6 +25,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from starlette.types import ASGIApp, Receive, Scope, Send
+
+class NormalizePathMiddleware:
+    """Normalizes multiple consecutive slashes (e.g. //auth/google -> /auth/google)."""
+    def __init__(self, app: ASGIApp):
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope["type"] == "http":
+            path = scope.get("path", "")
+            if "//" in path:
+                scope["path"] = "/" + "/".join(filter(None, path.split("/")))
+        await self.app(scope, receive, send)
+
+app.add_middleware(NormalizePathMiddleware)
+
 # Include Routers
 app.include_router(auth_router.router)
 app.include_router(problems.router)

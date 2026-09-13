@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { apiFetch } from '../lib/api';
+import { apiFetch, API_BASE_URL } from '../lib/api';
 import { Download, Mail, CheckCircle2, ShieldCheck, Check } from 'lucide-react';
 
 export const ProposalDetail: React.FC = () => {
@@ -27,9 +27,8 @@ export const ProposalDetail: React.FC = () => {
 
   const handleDownloadPdf = () => {
     const token = localStorage.getItem('skillproof_token');
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
     
-    fetch(`${apiUrl}/proposals/${proposalId}/pdf`, {
+    fetch(`${API_BASE_URL}/proposals/${proposalId}/pdf`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.blob())
