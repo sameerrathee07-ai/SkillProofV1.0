@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy import func, case
+from sqlalchemy.orm import Session, joinedload
 from typing import Optional, List
 from database import get_db
 from models import User, Problem, Proposal
@@ -68,19 +69,38 @@ def get_problems(
     limit: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db)
 ):
-    query = db.query(Problem)
+    base_query = db.query(Problem)
+    if status:
+        base_query = base_query.filter(Problem.status == status)
+    if category and category != "All":
+        base_query = base_query.filter(Problem.category == category)
+
+    total = base_query.count()
+
+    query = (
+        db.query(
+            Problem,
+            func.count(Proposal.id).label("proposal_count"),
+            func.count(case((Proposal.status == "submitted", 1))).label("passed_gate_count")
+        )
+        .options(joinedload(Problem.poster))
+        .outerjoin(Proposal, Proposal.problem_id == Problem.id)
+    )
     if status:
         query = query.filter(Problem.status == status)
     if category and category != "All":
         query = query.filter(Problem.category == category)
 
-    total = query.count()
-    items = query.order_by(Problem.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
+    items = (
+        query.group_by(Problem.id)
+        .order_by(Problem.created_at.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
 
     results = []
-    for p in items:
-        p_count = db.query(Proposal).filter(Proposal.problem_id == p.id).count()
-        passed_count = db.query(Proposal).filter(Proposal.problem_id == p.id, Proposal.status == "submitted").count()
+    for p, p_count, passed_count in items:
         results.append(ProblemResponse(
             problem_id=p.id,
             poster_id=p.poster_id,
@@ -109,20 +129,37 @@ def get_my_listings(
     if current_user.role != "poster":
         raise HTTPException(status_code=403, detail="Only problem posters can view listing dashboard.")
 
-    query = db.query(Problem).filter(Problem.poster_id == current_user.id)
+    base_query = db.query(Problem).filter(Problem.poster_id == current_user.id)
+    if status and status != "all":
+        base_query = base_query.filter(Problem.status == status)
+
+    total_posted = base_query.count()
+
+    query = (
+        db.query(
+            Problem,
+            func.count(Proposal.id).label("proposal_count"),
+            func.count(case((Proposal.status == "submitted", 1))).label("passed_gate_count")
+        )
+        .filter(Problem.poster_id == current_user.id)
+        .outerjoin(Proposal, Proposal.problem_id == Problem.id)
+    )
     if status and status != "all":
         query = query.filter(Problem.status == status)
 
-    total_posted = query.count()
-    items = query.order_by(Problem.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
+    items = (
+        query.group_by(Problem.id)
+        .order_by(Problem.created_at.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
 
     res_items = []
     total_proposals_all = 0
     total_solved = 0
 
-    for p in items:
-        p_count = db.query(Proposal).filter(Proposal.problem_id == p.id).count()
-        passed_count = db.query(Proposal).filter(Proposal.problem_id == p.id, Proposal.status == "submitted").count()
+    for p, p_count, passed_count in items:
         total_proposals_all += p_count
         if p.status == "closed":
             total_solved += 1

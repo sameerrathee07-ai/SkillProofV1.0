@@ -6,7 +6,7 @@ from google.auth.transport import requests
 from database import get_db
 from models import User
 from schemas import SignupRequest, LoginRequest, GoogleLoginRequest, AuthResponse
-from auth import hash_password, verify_password, create_access_token
+from auth import hash_password, verify_password, create_access_token, get_current_user
 
 def get_google_client_id() -> str | None:
     raw = os.getenv("GOOGLE_CLIENT_ID", "").strip().strip('"').strip("'")
@@ -91,3 +91,27 @@ def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
         fullName=user.full_name,
         email=user.email
     )
+
+@router.delete("/me", status_code=status.HTTP_200_OK)
+def delete_account(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """GDPR Article 17 - Right to be Forgotten user deletion endpoint."""
+    db.delete(current_user)
+    db.commit()
+    return {"status": "success", "message": "Account and associated personal data deleted successfully."}
+
+@router.get("/me/export")
+def export_user_data(
+    current_user: User = Depends(get_current_user)
+):
+    """GDPR Article 15 - Data Portability export endpoint."""
+    return {
+        "id": current_user.id,
+        "full_name": current_user.full_name,
+        "email": current_user.email,
+        "organization": current_user.organization,
+        "role": current_user.role,
+        "created_at": current_user.created_at.isoformat() if current_user.created_at else None
+    }

@@ -14,12 +14,17 @@ export const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'poster' | 'solver'>('solver');
+  const [consent, setConsent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     if (!credentialResponse.credential) return;
+    if (!consent) {
+      setError('You must accept the Terms of Service and Privacy Policy to create an account.');
+      return;
+    }
     setError('');
     setLoading(true);
     try {
@@ -55,6 +60,10 @@ export const SignupPage: React.FC = () => {
     e.preventDefault();
     setError('');
 
+    if (!consent) {
+      setError('You must accept the Terms of Service and Privacy Policy to proceed.');
+      return;
+    }
     if (fullName.trim().length < 2) {
       setError('Full Name must be at least 2 characters.');
       return;
@@ -110,7 +119,7 @@ export const SignupPage: React.FC = () => {
         </div>
 
         {error && (
-          <div className="p-3 bg-brick-light border border-brick/30 text-brick text-xs font-semibold rounded-md">
+          <div role="alert" aria-live="assertive" className="p-3 bg-brick-light border border-brick/30 text-brick text-xs font-semibold rounded-md">
             {error}
           </div>
         )}
@@ -138,7 +147,7 @@ export const SignupPage: React.FC = () => {
           
           {/* Role Selector */}
           <div className="space-y-1">
-            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider">Select Your Role</label>
+            <span className="block text-xs font-semibold uppercase text-ink-muted tracking-wider">Select Your Role</span>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
@@ -171,8 +180,9 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Full Name</label>
+            <label htmlFor="fullName" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Full Name</label>
             <input
+              id="fullName"
               type="text"
               required
               value={fullName}
@@ -183,8 +193,9 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Organization / School (Optional)</label>
+            <label htmlFor="organization" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Organization / School (Optional)</label>
             <input
+              id="organization"
               type="text"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
@@ -194,8 +205,9 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Email Address</label>
+            <label htmlFor="signupEmail" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Email Address</label>
             <input
+              id="signupEmail"
               type="email"
               required
               value={email}
@@ -206,9 +218,10 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Password</label>
+            <label htmlFor="signupPassword" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Password</label>
             <div className="relative">
               <input
+                id="signupPassword"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
@@ -219,11 +232,36 @@ export const SignupPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute right-3 top-3 text-ink-muted hover:text-ink"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
+          </div>
+
+          {/* Privacy Policy & TOS Consent Checkbox */}
+          <div className="pt-1">
+            <label htmlFor="consentCheckbox" className="flex items-start gap-2 text-xs text-ink-muted cursor-pointer">
+              <input
+                id="consentCheckbox"
+                type="checkbox"
+                required
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-0.5 rounded border-ink/20 text-brass focus:ring-brass"
+              />
+              <span>
+                I agree to SkillProof's{' '}
+                <Link to="/terms" target="_blank" className="text-brass font-bold hover:underline">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link to="/privacy" target="_blank" className="text-brass font-bold hover:underline">
+                  Privacy Policy
+                </Link>.
+              </span>
+            </label>
           </div>
 
           <button

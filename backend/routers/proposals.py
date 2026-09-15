@@ -52,6 +52,9 @@ def get_proposal(
         created_at=proposal.created_at
     )
 
+# In-memory PDF byte cache keyed by proposal_id
+_pdf_cache = {}
+
 @router.get("/proposals/{proposal_id}/pdf")
 def download_proposal_pdf(
     proposal_id: str,
@@ -69,30 +72,37 @@ def download_proposal_pdf(
     pitch = proposal.pitch
     solver = proposal.solver
 
-    pdf_bytes = generate_proposal_pdf(
-        solver_name=solver.full_name,
-        problem_title=problem.title,
-        category=problem.category,
-        budget=problem.budget_range,
-        timeline=problem.timeline,
-        pitch_responses={
-            "step1": pitch.step1_response or "",
-            "step2": pitch.step2_response or "",
-            "step3": pitch.step3_response or "",
-            "step4": pitch.step4_response or "",
-            "step5": pitch.step5_response or "",
-        },
-        scores=proposal.dimension_scores,
-        average_score=proposal.average_score,
-        status=proposal.status,
-        feedback=proposal.feedback
-    )
+    if proposal_id in _pdf_cache:
+        pdf_bytes = _pdf_cache[proposal_id]
+    else:
+        pdf_bytes = generate_proposal_pdf(
+            solver_name=solver.full_name,
+            problem_title=problem.title,
+            category=problem.category,
+            budget=problem.budget_range,
+            timeline=problem.timeline,
+            pitch_responses={
+                "step1": pitch.step1_response or "",
+                "step2": pitch.step2_response or "",
+                "step3": pitch.step3_response or "",
+                "step4": pitch.step4_response or "",
+                "step5": pitch.step5_response or "",
+            },
+            scores=proposal.dimension_scores,
+            average_score=proposal.average_score,
+            status=proposal.status,
+            feedback=proposal.feedback
+        )
+        _pdf_cache[proposal_id] = pdf_bytes
 
     filename = f"proposal_{solver.full_name.replace(' ', '_')}_{proposal.id[:8]}.pdf"
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename={filename}"}
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Cache-Control": "private, max-age=86400, immutable"
+        }
     )
 
 @router.get("/my-proposals", response_model=ProposalListResponse)

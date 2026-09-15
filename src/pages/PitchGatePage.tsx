@@ -151,6 +151,17 @@ export const PitchGatePage: React.FC = () => {
         </p>
       </div>
 
+      {/* FTC AI Act Compliance Notice */}
+      <div role="note" className="bg-brass/10 border border-brass/40 rounded-xl p-4 text-xs text-ink flex items-start gap-3">
+        <Sparkles className="w-5 h-5 text-brass shrink-0 mt-0.5" />
+        <div className="space-y-1">
+          <span className="font-bold text-ink">Automated AI Evaluation Notice</span>
+          <p className="text-ink-muted">
+            Pitch responses are evaluated using automated algorithms across 6 quality dimensions (clarity, specificity, viability, awareness, credibility, readiness). Solvers may request manual secondary review if they believe an evaluation contains technical errors.
+          </p>
+        </div>
+      </div>
+
       {scoredResult ? (
         /* Results Card — Passed vs Needs Work */
         <div className="bg-ivory border border-ink/10 rounded-2xl p-6 sm:p-8 shadow-md space-y-6">
