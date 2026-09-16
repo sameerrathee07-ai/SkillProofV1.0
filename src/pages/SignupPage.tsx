@@ -122,7 +122,6 @@ export const SignupPage: React.FC = () => {
             onError={() => setError('Google Sign-In failed or was closed.')}
             theme="outline"
             shape="rectangular"
-            width="100%"
           />
         </div>
 
