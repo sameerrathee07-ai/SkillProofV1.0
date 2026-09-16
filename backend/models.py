@@ -35,9 +35,9 @@ class User(Base):
     tokens_balance = Column(Integer, default=50)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    problems = relationship("Problem", back_populates="poster")
-    pitches = relationship("Pitch", back_populates="solver")
-    proposals = relationship("Proposal", back_populates="solver")
+    problems = relationship("Problem", back_populates="poster", cascade="all, delete-orphan")
+    pitches = relationship("Pitch", back_populates="solver", cascade="all, delete-orphan")
+    proposals = relationship("Proposal", back_populates="solver", cascade="all, delete-orphan")
 
 
 class Problem(Base):
@@ -54,8 +54,8 @@ class Problem(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     poster = relationship("User", back_populates="problems")
-    pitches = relationship("Pitch", back_populates="problem")
-    proposals = relationship("Proposal", back_populates="problem")
+    pitches = relationship("Pitch", back_populates="problem", cascade="all, delete-orphan")
+    proposals = relationship("Proposal", back_populates="problem", cascade="all, delete-orphan")
 
 
 class Pitch(Base):
@@ -77,7 +77,7 @@ class Pitch(Base):
 
     solver = relationship("User", back_populates="pitches")
     problem = relationship("Problem", back_populates="pitches")
-    proposals = relationship("Proposal", back_populates="pitch")
+    proposals = relationship("Proposal", back_populates="pitch", cascade="all, delete-orphan")
 
 
 class Proposal(Base):

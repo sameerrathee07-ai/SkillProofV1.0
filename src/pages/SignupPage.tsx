@@ -14,17 +14,12 @@ export const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'poster' | 'solver'>('solver');
-  const [consent, setConsent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     if (!credentialResponse.credential) return;
-    if (!consent) {
-      setError('You must accept the Terms of Service and Privacy Policy to create an account.');
-      return;
-    }
     setError('');
     setLoading(true);
     try {
@@ -60,10 +55,6 @@ export const SignupPage: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (!consent) {
-      setError('You must accept the Terms of Service and Privacy Policy to proceed.');
-      return;
-    }
     if (fullName.trim().length < 2) {
       setError('Full Name must be at least 2 characters.');
       return;
@@ -109,7 +100,7 @@ export const SignupPage: React.FC = () => {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
       <div className="bg-ivory border border-ink/10 rounded-2xl p-8 sm:p-10 shadow-lg max-w-md w-full space-y-6">
-        
+
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-ink text-ivory flex items-center justify-center font-serif text-2xl font-bold mx-auto shadow-md">
             S<span className="text-brass">P</span>
@@ -119,7 +110,7 @@ export const SignupPage: React.FC = () => {
         </div>
 
         {error && (
-          <div role="alert" aria-live="assertive" className="p-3 bg-brick-light border border-brick/30 text-brick text-xs font-semibold rounded-md">
+          <div className="p-3 bg-brick-light border border-brick/30 text-brick text-xs font-semibold rounded-md">
             {error}
           </div>
         )}
@@ -144,19 +135,18 @@ export const SignupPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm font-medium">
-          
+
           {/* Role Selector */}
           <div className="space-y-1">
-            <span className="block text-xs font-semibold uppercase text-ink-muted tracking-wider">Select Your Role</span>
+            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider">Select Your Role</label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setRole('solver')}
-                className={`p-3 rounded-lg border flex flex-col items-center gap-1.5 transition-all ${
-                  role === 'solver'
-                    ? 'border-brass bg-brass/10 text-ink shadow-sm'
-                    : 'border-ink/10 bg-ivory text-ink-muted hover:border-ink/20'
-                }`}
+                className={`p-3 rounded-lg border flex flex-col items-center gap-1.5 transition-all ${role === 'solver'
+                  ? 'border-brass bg-brass/10 text-ink shadow-sm'
+                  : 'border-ink/10 bg-ivory text-ink-muted hover:border-ink/20'
+                  }`}
               >
                 <UserCheck className={`w-5 h-5 ${role === 'solver' ? 'text-brass' : ''}`} />
                 <span className="text-xs font-bold">Solver</span>
@@ -166,11 +156,10 @@ export const SignupPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setRole('poster')}
-                className={`p-3 rounded-lg border flex flex-col items-center gap-1.5 transition-all ${
-                  role === 'poster'
-                    ? 'border-brass bg-brass/10 text-ink shadow-sm'
-                    : 'border-ink/10 bg-ivory text-ink-muted hover:border-ink/20'
-                }`}
+                className={`p-3 rounded-lg border flex flex-col items-center gap-1.5 transition-all ${role === 'poster'
+                  ? 'border-brass bg-brass/10 text-ink shadow-sm'
+                  : 'border-ink/10 bg-ivory text-ink-muted hover:border-ink/20'
+                  }`}
               >
                 <Building2 className={`w-5 h-5 ${role === 'poster' ? 'text-brass' : ''}`} />
                 <span className="text-xs font-bold">Problem Poster</span>
@@ -180,9 +169,8 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="fullName" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Full Name</label>
+            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Full Name</label>
             <input
-              id="fullName"
               type="text"
               required
               value={fullName}
@@ -193,9 +181,8 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="organization" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Organization / School (Optional)</label>
+            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Organization / School (Optional)</label>
             <input
-              id="organization"
               type="text"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
@@ -205,9 +192,8 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="signupEmail" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Email Address</label>
+            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Email Address</label>
             <input
-              id="signupEmail"
               type="email"
               required
               value={email}
@@ -218,10 +204,9 @@ export const SignupPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="signupPassword" className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Password</label>
+            <label className="block text-xs font-semibold uppercase text-ink-muted tracking-wider mb-1">Password</label>
             <div className="relative">
               <input
-                id="signupPassword"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
@@ -232,36 +217,11 @@ export const SignupPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute right-3 top-3 text-ink-muted hover:text-ink"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-          </div>
-
-          {/* Privacy Policy & TOS Consent Checkbox */}
-          <div className="pt-1">
-            <label htmlFor="consentCheckbox" className="flex items-start gap-2 text-xs text-ink-muted cursor-pointer">
-              <input
-                id="consentCheckbox"
-                type="checkbox"
-                required
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                className="mt-0.5 rounded border-ink/20 text-brass focus:ring-brass"
-              />
-              <span>
-                I agree to SkillProof's{' '}
-                <Link to="/terms" target="_blank" className="text-brass font-bold hover:underline">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" target="_blank" className="text-brass font-bold hover:underline">
-                  Privacy Policy
-                </Link>.
-              </span>
-            </label>
           </div>
 
           <button

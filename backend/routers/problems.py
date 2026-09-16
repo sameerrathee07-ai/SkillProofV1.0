@@ -134,6 +134,10 @@ def get_my_listings(
         base_query = base_query.filter(Problem.status == status)
 
     total_posted = base_query.count()
+    
+    # Calculate global metrics for all problems, not just the paginated slice
+    total_solved = base_query.filter(Problem.status == "closed").count()
+    total_proposals_all = db.query(Proposal).join(Problem).filter(Problem.poster_id == current_user.id).count()
 
     query = (
         db.query(
@@ -156,14 +160,8 @@ def get_my_listings(
     )
 
     res_items = []
-    total_proposals_all = 0
-    total_solved = 0
 
     for p, p_count, passed_count in items:
-        total_proposals_all += p_count
-        if p.status == "closed":
-            total_solved += 1
-
         res_items.append({
             "problem_id": p.id,
             "title": p.title,

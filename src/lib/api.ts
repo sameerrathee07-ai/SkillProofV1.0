@@ -22,6 +22,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   if (response.status === 401) {
     localStorage.removeItem('skillproof_token');
     localStorage.removeItem('skillproof_user');
+    window.dispatchEvent(new CustomEvent('skillproof:unauthorized'));
   }
 
   const data = await response.json().catch(() => ({}));

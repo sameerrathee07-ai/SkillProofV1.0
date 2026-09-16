@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+import os
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User, Problem, Pitch, Proposal
@@ -6,6 +7,11 @@ from auth import hash_password
 from scoring import score_pitch_responses
 
 router = APIRouter(prefix="/admin", tags=["Admin & Seed"])
+
+def verify_admin_secret(x_admin_secret: str = Header(None)):
+    expected_secret = os.getenv("ADMIN_SECRET")
+    if not expected_secret or x_admin_secret != expected_secret:
+        raise HTTPException(status_code=403, detail="Forbidden")
 
 @router.post("/seed/problems")
 def seed_problems(db: Session = Depends(get_db)):
@@ -161,7 +167,7 @@ def seed_full_demo_loop(db: Session = Depends(get_db)):
         "status": proposal.status
     }
 
-@router.delete("/clear")
+@router.delete("/clear", dependencies=[Depends(verify_admin_secret)])
 def clear_all_data(db: Session = Depends(get_db)):
     db.query(Proposal).delete()
     db.query(Pitch).delete()

@@ -11,6 +11,30 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.pdfgen import canvas
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.charts.spider import SpiderChart
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import os
+
+try:
+    # Register Unicode fonts for currency symbol support
+    font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans.ttf")
+    bold_font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans-Bold.ttf")
+    oblique_font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans-Oblique.ttf")
+    
+    if os.path.exists(font_path):
+        pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
+    if os.path.exists(bold_font_path):
+        pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", bold_font_path))
+    if os.path.exists(oblique_font_path):
+        pdfmetrics.registerFont(TTFont("DejaVuSans-Oblique", oblique_font_path))
+    
+    FONT_REGULAR = "DejaVuSans"
+    FONT_BOLD = "DejaVuSans-Bold"
+    FONT_OBLIQUE = "DejaVuSans-Oblique"
+except Exception:
+    FONT_REGULAR = "Helvetica"
+    FONT_BOLD = "Helvetica-Bold"
+    FONT_OBLIQUE = "Helvetica-Oblique"
 
 BG_IVORY = HexColor("#F7F3EA")
 INK_DARK = HexColor("#1C1B19")
@@ -32,7 +56,7 @@ def _editorial_canvas(canvas_obj: canvas.Canvas, doc):
     canvas_obj.line(MARGIN, MARGIN, PAGE_W - MARGIN, MARGIN)
     canvas_obj.line(MARGIN, PAGE_H - MARGIN, PAGE_W - MARGIN, PAGE_H - MARGIN)
 
-    canvas_obj.setFont("Helvetica-Bold", 8)
+    canvas_obj.setFont(FONT_BOLD, 8)
     canvas_obj.setFillColor(GRAY_MUTED)
     canvas_obj.drawString(MARGIN, MARGIN - 10, f"SkillProof Proposal — Generated {datetime.utcnow().strftime('%Y-%m-%d %H:%M')} UTC")
     canvas_obj.drawRightString(PAGE_W - MARGIN, MARGIN - 10, f"Page {doc.page}")
@@ -43,7 +67,7 @@ def _get_styles():
 
     styles.add(ParagraphStyle(
         name="HeaderTitle",
-        fontName="Helvetica-Bold",
+        fontName=FONT_BOLD,
         fontSize=28,
         leading=34,
         textColor=INK_DARK,
@@ -52,7 +76,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="HeaderSubtitle",
-        fontName="Helvetica",
+        fontName=FONT_REGULAR,
         fontSize=12,
         leading=16,
         textColor=BRASS_GOLD,
@@ -61,7 +85,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="ProblemTitle",
-        fontName="Helvetica-Bold",
+        fontName=FONT_BOLD,
         fontSize=16,
         leading=20,
         textColor=INK_DARK,
@@ -70,7 +94,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="SectionHeader",
-        fontName="Helvetica-Bold",
+        fontName=FONT_BOLD,
         fontSize=13,
         leading=17,
         textColor=BRASS_GOLD,
@@ -79,7 +103,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="BodyContent",
-        fontName="Helvetica",
+        fontName=FONT_REGULAR,
         fontSize=10,
         leading=15,
         textColor=INK_DARK,
@@ -87,7 +111,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="ScoreBoxLabel",
-        fontName="Helvetica-Bold",
+        fontName=FONT_BOLD,
         fontSize=8,
         leading=10,
         textColor=BRASS_GOLD,
@@ -95,7 +119,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="ScoreBoxValue",
-        fontName="Helvetica-Bold",
+        fontName=FONT_BOLD,
         fontSize=20,
         leading=24,
         textColor=FOREST_GREEN,
@@ -103,7 +127,7 @@ def _get_styles():
     ))
     styles.add(ParagraphStyle(
         name="FeedbackBox",
-        fontName="Helvetica-Oblique",
+        fontName=FONT_OBLIQUE,
         fontSize=9.5,
         leading=14,
         textColor=INK_DARK,

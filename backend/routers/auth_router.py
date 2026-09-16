@@ -8,9 +8,11 @@ from models import User
 from schemas import SignupRequest, LoginRequest, GoogleLoginRequest, AuthResponse
 from auth import hash_password, verify_password, create_access_token, get_current_user
 
-def get_google_client_id() -> str | None:
+def get_google_client_id() -> str:
     raw = os.getenv("GOOGLE_CLIENT_ID", "").strip().strip('"').strip("'")
-    return raw if raw else None
+    if not raw:
+        raise HTTPException(status_code=500, detail="Google Client ID not configured on server")
+    return raw
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -60,9 +62,9 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
 
 @router.post("/google", response_model=AuthResponse)
 def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
+    client_id_check = get_google_client_id()
     try:
-        # If GOOGLE_CLIENT_ID is set in env, verify against it; otherwise verify token structure
-        client_id_check = get_google_client_id()
+        # Strict audience verification using the server's Google Client ID
         id_info = id_token.verify_oauth2_token(req.id_token, requests.Request(), audience=client_id_check)
         email = id_info.get("email")
         name = id_info.get("name", "Google User")
